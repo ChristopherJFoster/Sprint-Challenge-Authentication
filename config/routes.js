@@ -1,7 +1,9 @@
 const axios = require('axios');
 const Joi = require('joi');
-const Auth = require('../database/models/auth-model');
+const bcrypt = require('bcryptjs');
 
+const Auth = require('../database/models/auth-model');
+const generateToken = require('../auth/generate-token');
 const { authenticate } = require('../auth/authenticate');
 
 module.exports = server => {
@@ -17,6 +19,11 @@ const registerSchema = Joi.object().keys({
   password: Joi.string()
     .max(255)
     .required()
+});
+
+const loginSchema = Joi.object().keys({
+  username: Joi.required(),
+  password: Joi.required()
 });
 
 async function register(req, res) {
@@ -49,8 +56,32 @@ async function register(req, res) {
   }
 }
 
-function login(req, res) {
-  // implement user login
+async function login(req, res) {
+  const { username, password } = req.body;
+  // I get that using Joi to validate login is overkill—just trying to keep using the libary.
+  const result = Joi.validate({ username, password }, loginSchema);
+  if (result.error) {
+    res.status(400).json({ error: `${result.error}` });
+  } else {
+    try {
+      const user = await Auth.getUserForLogin(username);
+      if (user && bcrypt.compareSync(password, user.password)) {
+        const token = generateToken(user);
+        res.status(200).json({
+          message: `Welcome ${user.username}!`,
+          token
+        });
+      } else {
+        res.status(401).json({
+          error: 'Invalid credentials.'
+        });
+      }
+    } catch (err) {
+      res.status(500).json({
+        error: `There was an error while logging in the user. ${err}`
+      });
+    }
+  }
 }
 
 function getJokes(req, res) {
