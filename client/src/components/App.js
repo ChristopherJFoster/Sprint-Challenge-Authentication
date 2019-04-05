@@ -1,7 +1,6 @@
 import React from 'react';
-import { Route, NavLink, withRouter } from 'react-router-dom';
+import { Route, NavLink, withRouter, Redirect } from 'react-router-dom';
 
-import Home from './Home';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
 import Jokes from './Jokes';
@@ -15,8 +14,6 @@ const App = ({ history }) => {
   return (
     <div className='container'>
       <header>
-        <NavLink to='/'>Home</NavLink>
-        &nbsp;|&nbsp;
         <NavLink to='/signup'>Sign Up</NavLink>
         &nbsp;|&nbsp;
         <NavLink to='/signin'>Sign In</NavLink>
@@ -26,7 +23,8 @@ const App = ({ history }) => {
         <button onClick={signOut}>Sign Out</button>
       </header>
       <main>
-        <Route path='/' exact component={Home} />
+        {/* It's your favorite: Default route is a redirect: */}
+        <Route exact path='/' render={() => <Redirect to='/jokes' />} />
         <Route path='/signup' component={SignUp} />
         <Route path='/signin' component={SignIn} />
         <Route path='/jokes' component={Jokes} />

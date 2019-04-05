@@ -17,9 +17,9 @@ const SignUp = ({ history }) => {
       console.log(response.data.message);
       usernameSignUp.setValue('');
       passwordSignUp.setValue('');
-      history.push('jokes');
+      history.push('signin');
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 

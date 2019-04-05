@@ -21,7 +21,7 @@ const Jokes = () => {
   return (
     <div className='jokes-list'>
       {jokes.length > 0 && (
-        <div>
+        <div className='Jokes'>
           <h1>Dad Jokes</h1>
           {jokes.map((joke, index) => (
             <Joke key={joke.id} number={index + 1} joke={joke} />
